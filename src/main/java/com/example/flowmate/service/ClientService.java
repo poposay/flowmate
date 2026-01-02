@@ -1,11 +1,11 @@
 package com.example.flowmate.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
 import com.example.flowmate.entity.Client;
+import com.example.flowmate.exception.ClientNotFoundException;
 import com.example.flowmate.repository.ClientRepository;
 
 import jakarta.transaction.Transactional;
@@ -30,13 +30,13 @@ public class ClientService {
 
 	public Client readById(Long id) {
 		return clientRepository.findById(id)
-				.orElseThrow(() -> new RuntimeException("client not found"));
+				.orElseThrow(() -> new ClientNotFoundException(id));
 	}
 	
 	@Transactional
 	public Client update(Client afterClient) {
 		Client beforeClient = clientRepository.findById(afterClient.getId())
-				.orElseThrow(() -> new RuntimeException("client not found"));
+				.orElseThrow(() -> new ClientNotFoundException(afterClient.getId()));
 		
 		beforeClient.setName(afterClient.getName());
 		beforeClient.setEmail(afterClient.getEmail());
@@ -48,7 +48,7 @@ public class ClientService {
 	@Transactional
 	public void delete(Long id) {
 		Client target = clientRepository.findById(id)
-				.orElseThrow(() -> new RuntimeException("client not found"));
+				.orElseThrow(() -> new ClientNotFoundException(id));
 		clientRepository.delete(target);
 		
 	}
